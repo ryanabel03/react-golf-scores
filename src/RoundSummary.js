@@ -2,13 +2,19 @@ import React, { Component } from 'react';
 
 class RoundSummary extends Component {
   formattedScores() {
-    return Object.keys(this.props.scores).map((key, i) => {
-      let scores = key + " " + this.props.scores[key].player.handicap + " " + this.props.scores[key].holes.join(",");
+    return this.props.rounds.map((round, i) => {
+      let scores = "";
+      if (round.blind) {
+        scores = round.player.initials +"-x" + " " + round.player.handicap + " " + round.scores.join(" ");
+      }
+      else {
+        scores = round.player.initials + " " + round.player.handicap + " " + round.scores.join(" ");
+      }
       return <div key={i}>{scores}</div>;
     });
   }
   render() {
-      return <div class="scores">{this.formattedScores()}</div>;
+      return <div className="scores">{this.formattedScores()}</div>;
   }
 }
 
