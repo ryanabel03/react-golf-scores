@@ -15,9 +15,8 @@ class ScoreList extends Component {
   }
   componentDidMount() {
     this.retrieveMatchups().then(json => {
-      console.log(json);
       let rounds = json.players.map(function(player) {
-        return {scores: [], player: player, blind: false};
+        return {scores: [], player: player, blind: false, sub: {initials: ""}};
       });
       this.setState({players: json.players, course: json.course, rounds: rounds});
     });
@@ -85,9 +84,8 @@ class ScoreList extends Component {
         par: [4, 4, 3, 4, 5, 5, 3, 4, 4],
         handicap: [3, 2, 5, 1, 7, 9, 8, 4, 6]
       }
-    }
+    };
 
-    console.log(course.name.toLowerCase());
     let courseInfo = courses[course.name.toLowerCase()];
     let scores = courseInfo.par;
     let i = 1;
@@ -105,7 +103,6 @@ class ScoreList extends Component {
     let sum = scores.reduce(function(m, s) {
       return m + s;
     }, 0);
-    console.log(scores.join(" ") + " " + sum);
     return scores;
   }
 
@@ -124,6 +121,17 @@ class ScoreList extends Component {
     if (round.blind) {
       round.scores = this.calculateBlindRound(this.state.course, player.handicap);
     }
+    oldRounds[oldRounds.indexOf(round)] = round;
+    this.setState({rounds: oldRounds});
+  }
+
+  updateSub(player, sub) {
+    let oldRounds = this.state.rounds;
+    let round = this.findRound(player);
+    let subPlayer = this.state.players.find(function(p) {
+      return p.initials == sub.value;
+    });
+    round.sub = subPlayer;
     oldRounds[oldRounds.indexOf(round)] = round;
     this.setState({rounds: oldRounds});
   }
@@ -147,7 +155,17 @@ class ScoreList extends Component {
     </tr>;
     let players = this.state.players.map((player, i) => {
       let round = this.findRound(player);
-      return <PlayerRow key={i} scores={round.scores} info={player} coursePar={this.calculatePar()} onScoreUpdate={this.handleScoreUpdate.bind(this)} onBlindUpdate={this.updateBlind.bind(this)} />;
+      return <PlayerRow
+        key={i}
+        scores={round.scores}
+        players={this.state.players}
+        sub={round.sub}
+        info={player}
+        coursePar={this.calculatePar()}
+        onScoreUpdate={this.handleScoreUpdate.bind(this)}
+        onBlindUpdate={this.updateBlind.bind(this)}
+        onSubAssign={this.updateSub.bind(this)}
+      />;
     });
     return <div className="">
       <table className="table">

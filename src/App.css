@@ -26,3 +26,11 @@
 .hole-value {
   width: 40px;
 }
+
+.player-info {
+  min-width: 240px;
+}
+.orig-handicap {
+  padding-right: 5px;
+  text-decoration: line-through;
+}

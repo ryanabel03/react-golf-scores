@@ -8,7 +8,11 @@ class RoundSummary extends Component {
         scores = round.player.initials +"-x" + " " + round.player.handicap + " " + round.scores.join(" ");
       }
       else {
-        scores = round.player.initials + " " + round.player.handicap + " " + round.scores.join(" ");
+        if (round.sub.initials.length > 0) {
+          scores = round.sub.initials + "-" + round.player.initials + " " + round.sub.handicap + " " + round.scores.join(" ");
+        } else {
+          scores = round.player.initials + " " + round.player.handicap + " " + round.scores.join(" ");
+        }
       }
       return <div key={i}>{scores}</div>;
     });
